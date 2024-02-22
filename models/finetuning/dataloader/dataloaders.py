@@ -259,27 +259,27 @@ def _get_dataloaders(dpathes: Dict, args: argparse.ArgumentParser) -> Dict:
   train_images_n, train_texts_n, train_tangrams_n, train_tangrams_set, train_max_len, train_parts_count = load_filenames(file_to_anns_train, dpathes['is_whole_image'])
 
   # load preprocessors 
-  preprocessor = _get_preprocessor(args)
+  train_preprocessor, test_preprocessor = _get_preprocessor(args)
 
   # make dataloaders
   if args.overfit_debug:
     inds = random.sample([i for i in range(len(train_images_n))], args.overfit_size)
     train_images_n = list(np.array(train_images_n)[inds])
     train_texts_n = list(np.array(train_texts_n)[inds])
-    dstrain = TrainingDataSet(dpathes['train_image_path'], train_images_n, train_texts_n, preprocessor)
+    dstrain = TrainingDataSet(dpathes['train_image_path'], train_images_n, train_texts_n, train_preprocessor)
     dltrain = DataLoader(dstrain, batch_size=args.batch_size, shuffle=True)
     data = {
       "images":train_images_n,
       "texts": train_texts_n,
       "targets": ["" for _ in range(args.overfit_size)],
     }
-    dsval = ValidationDataSet(dpathes['train_image_path'], data, preprocessor)
+    dsval = ValidationDataSet(dpathes['train_image_path'], data, test_preprocessor)
     dlval = DataLoader(dsval, batch_size=args.batch_size, shuffle=False, drop_last=True)
 
   elif args.random: # random contexts
-    dstrain = TrainingDataSet(dpathes['train_image_path'], train_images_n, train_texts_n, preprocessor)
+    dstrain = TrainingDataSet(dpathes['train_image_path'], train_images_n, train_texts_n, train_preprocessor)
     dltrain = DataLoader(dstrain, batch_size=args.batch_size, shuffle=True, drop_last=True)
-    dsval = ValidationDataSet(dpathes['val_image_path'], val_data, preprocessor)
+    dsval = ValidationDataSet(dpathes['val_image_path'], val_data, test_preprocessor)
     dlval = DataLoader(dsval, batch_size=args.batch_size, shuffle=False, drop_last=True)
 
     print('train data len: ', len(train_images_n),len(train_texts_n))
@@ -287,12 +287,12 @@ def _get_dataloaders(dpathes: Dict, args: argparse.ArgumentParser) -> Dict:
     print('# of train, val batches: ', len(dltrain),len(dlval))
 
   else: # controlled contexts
-    dstrain = TrainingDataSet(dpathes['train_image_path'], train_images_n, train_texts_n, preprocessor)
+    dstrain = TrainingDataSet(dpathes['train_image_path'], train_images_n, train_texts_n, train_preprocessor)
     sptrain = TrainingSampler(batch_size=args.batch_size, tangrams_n=train_tangrams_n, \
     texts_n=train_texts_n, tangrams_set=train_tangrams_set, max_len=train_max_len, \
     parts_count=train_parts_count) 
     dltrain = DataLoader(dstrain, batch_sampler=sptrain)
-    dsval = ValidationDataSet(dpathes['val_image_path'], val_data, preprocessor)
+    dsval = ValidationDataSet(dpathes['val_image_path'], val_data, test_preprocessor)
     dlval = DataLoader(dsval, batch_size=args.batch_size, shuffle=False, drop_last=True)
 
     print('train data len: ', len(train_images_n),len(train_texts_n))

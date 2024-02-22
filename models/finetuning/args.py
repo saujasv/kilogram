@@ -5,9 +5,12 @@ def get_args_parser():
 
     # model
     parser.add_argument("--model_type", default="clip", type=str)
+    parser.add_argument("--model_variant", default="ViT-B-32", type=str)
+    parser.add_argument("--pretrained", type=str)
 
     # dataset
     parser.add_argument("--dataset_type", default="aug_aug", type=str)
+    parser.add_argument("--dataset_prefix", default="./data", type=str)
     
     # experiments  
     parser.add_argument("--exp_name", default="clip", type=str)

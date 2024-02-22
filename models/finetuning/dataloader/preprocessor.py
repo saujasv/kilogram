@@ -2,15 +2,18 @@ import argparse
 from PIL import Image
 
 import torch
-import clip
+import open_clip
 from transformers import ViltProcessor
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class CLIPPreprocessor():
-  def __init__(self) -> None:
-    _, self._image_preprocess = clip.load("ViT-B/32", device=device, jit=False)
-    self._tokenizer = clip.tokenize
+  def __init__(self, variant, pretrained, torch_dtype=torch.bfloat16, device="cuda", train=False) -> None:
+    if train:
+      _, self._image_preprocess, _ = open_clip.create_model_and_transforms(variant, pretrained, torch_dtype, device)
+    else:
+      _, _, self._image_preprocess = open_clip.create_model_and_transforms(variant, pretrained, torch_dtype, device)
+    self._tokenizer = open_clip.get_tokenizer(variant)
 
   def preprocess(self, image_path: str, text: str):
     processed_image = self._image_preprocess(Image.open(image_path).convert("RGB"))
@@ -38,8 +41,11 @@ class ViLTPreprocessor():
 
 def _get_preprocessor(args: argparse.ArgumentParser):
     if args.model_type == "clip":
-      return CLIPPreprocessor()
+      return (
+        CLIPPreprocessor(args.model_variant, args.pretrained, train=True),
+        CLIPPreprocessor(args.model_variant, args.pretrained, train=False)
+      )
     elif args.model_type == "vilt":
-      return ViLTPreprocessor()
+      return (ViLTPreprocessor(), ViLTPreprocessor())
     else:
       raise ValueError("model type {} is not supported.".format(args.model_type))

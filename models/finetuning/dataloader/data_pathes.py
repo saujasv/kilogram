@@ -1,27 +1,29 @@
 import argparse
 from typing import Dict 
+import os
 
 def _get_dataset_pathes(args: argparse.ArgumentParser) -> Dict:
     # NOTE: Download data at: https://huggingface.co/datasets/lil-lab/kilogram/tree/main and create `./data/` to place all the downloaded files.
 
-    _whole_text_train = './data/training/texts/train_whole.json'
-    _whole_image_train = './data/training/images/train-black'
 
-    _whole_image_val = './data/training/images/val-black'
+    _whole_text_train = os.path.join(args.dataset_prefix, 'training/texts/train_whole.json')
+    _whole_image_train = os.path.join(args.dataset_prefix, 'training/images/train-black')
 
-    _part_text_train = './data/training/texts/train_part.json'
-    _part_image_train = './data/training/images/train-color'
+    _whole_image_val = os.path.join(args.dataset_prefix, 'training/images/val-black')
 
-    _part_image_val = './data/training/images/val-color'
+    _part_text_train = os.path.join(args.dataset_prefix, 'training/texts/train_part.json')
+    _part_image_train = os.path.join(args.dataset_prefix, 'training/images/train-color')
+
+    _part_image_val = os.path.join(args.dataset_prefix, 'training/images/val-color')
 
     if args.dataset_type == "aug_aug":
         IS_WHOLE_IMAGE=False
-        TRAIN_TEXT_PATH='./data/training/texts/train_augmented_part.json'
-        TRAIN_IMAGE_PATH= './data/training/images/augmented'
+        TRAIN_TEXT_PATH=os.path.join(args.dataset_prefix, 'training/texts/train_augmented_part.json')
+        TRAIN_IMAGE_PATH=os.path.join(args.dataset_prefix, 'training/images/augmented')
         if args.random:
-            VAL_DATA_PATH='./data/training/texts/validation/random/part+color.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/random/part+color.json')
         else:
-            VAL_DATA_PATH='./data/training/texts/validation/controlled/part+color.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/controlled/part+color.json')
         VAL_IMAGE_PATH=_part_image_val
 
     elif args.dataset_type == "part_color":
@@ -29,9 +31,9 @@ def _get_dataset_pathes(args: argparse.ArgumentParser) -> Dict:
         TRAIN_TEXT_PATH=_part_text_train
         TRAIN_IMAGE_PATH=_part_image_train
         if args.random:
-            VAL_DATA_PATH='./data/training/texts/validation/random/part+color.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/random/part+color.json')
         else:
-            VAL_DATA_PATH='./data/training/texts/validation/controlled/part+color.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/controlled/part+color.json')
             
         VAL_IMAGE_PATH=_part_image_val
 
@@ -40,9 +42,9 @@ def _get_dataset_pathes(args: argparse.ArgumentParser) -> Dict:
         TRAIN_TEXT_PATH=_part_text_train
         TRAIN_IMAGE_PATH=_whole_image_train
         if args.random:
-            VAL_DATA_PATH='./data/training/texts/validation/random/part+black.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/random/part+black.json')
         else:
-            VAL_DATA_PATH='./data/training/texts/validation/controlled/part+black.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/controlled/part+black.json')
         VAL_IMAGE_PATH=_whole_image_val
 
     elif args.dataset_type == "whole_color":
@@ -50,9 +52,9 @@ def _get_dataset_pathes(args: argparse.ArgumentParser) -> Dict:
         TRAIN_TEXT_PATH=_whole_text_train
         TRAIN_IMAGE_PATH=_part_image_train
         if args.random:
-            VAL_DATA_PATH='./data/training/texts/validation/random/whole+color.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/random/whole+color.json')
         else:
-            VAL_DATA_PATH='./data/training/texts/validation/controlled/whole+color.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/controlled/whole+color.json')
         VAL_IMAGE_PATH=_part_image_val
 
     elif args.dataset_type == "whole_black":
@@ -60,9 +62,9 @@ def _get_dataset_pathes(args: argparse.ArgumentParser) -> Dict:
         TRAIN_TEXT_PATH=_whole_text_train
         TRAIN_IMAGE_PATH=_whole_image_train
         if args.random:
-            VAL_DATA_PATH='./data/training/texts/validation/random/whole+black.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/random/whole+black.json')
         else:
-            VAL_DATA_PATH='./data/training/texts/validation/controlled/whole+black.json'
+            VAL_DATA_PATH=os.path.join(args.dataset_prefix, 'training/texts/validation/controlled/whole+black.json')
         VAL_IMAGE_PATH=_whole_image_val
 
     else:

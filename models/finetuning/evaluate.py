@@ -1,7 +1,6 @@
 import argparse
 from typing import Dict 
 from collections import defaultdict
-import clip
 import torch
 import json
 from PIL import Image

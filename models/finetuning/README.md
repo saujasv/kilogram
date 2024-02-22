@@ -9,6 +9,8 @@ You can also configure the data paths in `./dataloader/data_pathes.py` and `./ev
 | Parameter                 | Default       | Description   |	
 | :------------------------ |:-------------:| :-------------|
 | \-\-model_type 	       |	clip           |clip or vilt
+| \-\-model_variant 	       |	ViT-B-32       |clip variant
+| \-\-pretrained | | CLIP pretrained checkpoint
 | \-\-dataset_type          | aug_aug           |dataset variants: whole_black, whole_color, part_black, part_color, aug_aug, aug_dev (augmented development set, for by-part analysis)
 | \-\-not_logging	       | /	           | if set, no logging; otherwise, logs data on Weights & Biases
 | \-\-exp_name 	       |	clip	            |experiment name shown on Weights & Biases logging dashboard

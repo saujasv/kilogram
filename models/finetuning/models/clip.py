@@ -1,20 +1,19 @@
 import torch
 import torch.nn as nn
-import clip
+import open_clip
 import numpy as np
 
 class FTCLIP(nn.Module):
-  def __init__(self):
+  def __init__(self, variant, pretrained, torch_dtype, device):
     super(FTCLIP, self).__init__()
-    self._device = "cuda" if torch.cuda.is_available() else "cpu"
+    self._device = device
 
-    model, _ = clip.load("ViT-B/32", device=self._device, jit=False)
-    model = model.float()
+    model, _, _ = open_clip.create_model_and_transforms(variant, pretrained, torch_dtype, device)
     self.model = model
     self.encode_image = model.encode_image
     self.encode_text = model.encode_text
 
-    self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
+    self.logit_scale = model.logit_scale
 
     self.loss = nn.CrossEntropyLoss()
     

@@ -7,7 +7,7 @@ from models.vilt import FTViLT
 
 def _get_model(args: argparse.ArgumentParser):
     if args.model_type == "clip":
-        model = FTCLIP()
+        model = FTCLIP(args.model_variant, args.pretrained, torch.bfloat16, "cuda" if torch.cuda.is_available() else "cpu")
     elif args.model_type == "vilt":
         model = FTViLT()
     else:
